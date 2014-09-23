@@ -2,8 +2,8 @@ import tkvis as tk
 
 
 ACTIVE_FRAME_COLOR = 'red'
-INACTIVE_FRAME_COLOR = 'green'
-OTHER_COLOR = 'gray'
+INACTIVE_FRAME_COLOR = 'gray80'
+OTHER_COLOR = 'gray60'
 EXAMPLE_FRAME_SIZE = 20
 
 
@@ -75,21 +75,29 @@ class SideFrame(tk.Frame):
         frmSide.pack_propagate(0)
 
         if side in (tk.TOP, tk.BOTTOM):
-            key = 'height'
+            innerSize = {
+                    'height': EXAMPLE_FRAME_SIZE,
+                    'width': width/4,
+                }
+            size = {'height': EXAMPLE_FRAME_SIZE}
+
             fill = tk.X
             axis = ArrowCanvas.Y
         else:
-            key = 'width'
+            innerSize = {
+                    'width': EXAMPLE_FRAME_SIZE,
+                    'height': height/4,
+                }
+            size = {'width': EXAMPLE_FRAME_SIZE}
+
             fill = tk.Y
             axis = ArrowCanvas.X
-
-        size = {key: EXAMPLE_FRAME_SIZE}
 
         frmBefore = tk.Frame(frmSide.inner, bg=OTHER_COLOR, **size)
         frmBefore.pack(side=side, fill=fill)
 
-        frmPacked = tk.Frame(frmSide.inner, bg=ACTIVE_FRAME_COLOR, **size)
-        frmPacked.pack(side=side, fill=fill)
+        frmPacked = tk.Frame(frmSide.inner, bg=ACTIVE_FRAME_COLOR, **innerSize)
+        frmPacked.pack(side=side)
 
         cvsArrow = ArrowCanvas(frmSide.inner, axis)
         cvsArrow.pack(side=side)
@@ -127,3 +135,69 @@ class AnchorFrame(tk.Frame):
         frmAnchored = tk.Frame(frmPacked, bg=ACTIVE_FRAME_COLOR,
                 **innerFrameArgs)
         frmAnchored.pack(side=side, anchor=anchor)
+
+
+class FillFrame(tk.Frame):
+    def __init__(self, master, side, fill, width=100, height=100, **kwargs):
+        tk.Frame.__init__(self, master, **kwargs)
+
+        lbl = tk.Label(self, text='fill={}'.format(fill.upper()))
+        lbl.pack(side=tk.TOP)
+
+        frmFill = BorderedFrame(self, bd=2, width=width, height=height)
+        frmFill.pack(side=tk.TOP)
+        frmFill.pack_propagate(0)
+
+        if side in (tk.TOP, tk.BOTTOM):
+            key = 'height'
+            innerFrameArgs = {'width': width/4, 'height': EXAMPLE_FRAME_SIZE}
+        else:
+            key = 'width'
+            innerFrameArgs = {'width': EXAMPLE_FRAME_SIZE, 'height': height/4}
+
+        size = {key: EXAMPLE_FRAME_SIZE}
+
+        frmBefore = tk.Frame(frmFill.inner, bg=OTHER_COLOR, **size)
+        frmBefore.pack(side=side, fill=tk.BOTH)
+
+        frmPacked = tk.Frame(frmFill.inner, bg=INACTIVE_FRAME_COLOR, **size)
+        frmPacked.pack(side=side, fill=tk.BOTH)
+        frmPacked.pack_propagate(0)
+
+        frmFilled = tk.Frame(frmPacked, bg=ACTIVE_FRAME_COLOR,
+                **innerFrameArgs)
+        frmFilled.pack(side=side, fill=fill)
+
+
+class ExpandFrame(tk.Frame):
+    def __init__(self, master, side, expand, width=100, height=100, **kwargs):
+        tk.Frame.__init__(self, master, **kwargs)
+
+        lbl = tk.Label(self, text='expand={}'.format(str(expand)))
+        lbl.pack(side=tk.TOP)
+
+        frmExpand = BorderedFrame(self, bd=2, width=width, height=height)
+        frmExpand.pack(side=tk.TOP)
+        frmExpand.pack_propagate(0)
+
+        if side in (tk.TOP, tk.BOTTOM):
+            key = 'height'
+            fill = tk.X
+            innerFrameArgs = {'width': width/4, 'height': EXAMPLE_FRAME_SIZE}
+        else:
+            key = 'width'
+            fill = tk.Y
+            innerFrameArgs = {'width': EXAMPLE_FRAME_SIZE, 'height': height/4}
+
+        size = {key: EXAMPLE_FRAME_SIZE}
+
+        frmBefore = tk.Frame(frmExpand.inner, bg=OTHER_COLOR, **size)
+        frmBefore.pack(side=side, fill=fill)
+
+        frmPacked = tk.Frame(frmExpand.inner, bg=INACTIVE_FRAME_COLOR, **size)
+        frmPacked.pack(side=side, fill=tk.BOTH, expand=expand)
+        frmPacked.pack_propagate(0)
+
+        frmExpanded = tk.Frame(frmPacked, bg=ACTIVE_FRAME_COLOR,
+                **innerFrameArgs)
+        frmExpanded.pack(side=side, expand=expand)

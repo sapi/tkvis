@@ -1,7 +1,8 @@
-class Widget(object):
-    HIGHLIGHT_COLOR = 'red'
-    PARENT_HIGHLIGHT_COLOR = 'yellow'
+HIGHLIGHT_COLOR = 'red'
+PARENT_HIGHLIGHT_COLOR = 'green'
 
+
+class Widget(object):
     @classmethod
     def descriptionOf(cls, tkWidget):
         return tkWidget.__class__.__name__
@@ -26,7 +27,7 @@ class WidgetWithBackgroundHighlight(Widget):
     @classmethod
     def highlight(cls, tkWidget, asParent=False):
         oldBG = tkWidget.cget('bg')
-        col = cls.PARENT_HIGHLIGHT_COLOR if asParent else cls.HIGHLIGHT_COLOR
+        col = PARENT_HIGHLIGHT_COLOR if asParent else HIGHLIGHT_COLOR
 
         tkWidget.config(bg=col)
 
@@ -45,7 +46,7 @@ class Button(WidgetWithTextDescription):
     @classmethod
     def highlight(cls, tkWidget, asParent=False):
         oldFG = tkWidget.cget('fg')
-        col = cls.PARENT_HIGHLIGHT_COLOR if asParent else cls.HIGHLIGHT_COLOR
+        col = PARENT_HIGHLIGHT_COLOR if asParent else HIGHLIGHT_COLOR
 
         tkWidget.config(fg=col)
 

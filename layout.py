@@ -1,3 +1,5 @@
+import Tkinter as tk
+
 from widgets import describe
 
 
@@ -46,3 +48,7 @@ class TkObject(object):
     @packArgs.setter
     def packArgs(self, val):
         self._packArgs = val
+
+    @property
+    def needsPacking(self):
+        return not isinstance(self.obj, (tk.Tk, tk.Toplevel, tk.Menu))
