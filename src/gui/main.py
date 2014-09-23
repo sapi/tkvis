@@ -27,6 +27,7 @@ class TkVisualiser(tk.Toplevel):
         #### Set up the window
         ##      Left            Right
         ##
+        ##    [listbox]
         ##    [listbox]        [labels]
         ## [side] [anchor]  [pack details]
         ## [fill] [expand]
@@ -36,10 +37,18 @@ class TkVisualiser(tk.Toplevel):
         frmLeft = tk.Frame(self)
         frmLeft.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
 
+        ## Widget Listbox
         self.lbxWidgets = tk.Listbox(frmLeft)
         self.lbxWidgets.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
         self.lbxWidgets.bind('<<ListboxSelect>>',
                 self.lbxWidgetsSelectionChanged)
+
+        ## Problems Listbox
+        tk.Label(frmLeft, text='Errors/Warnings for Selected Widget:')\
+                .pack(side=tk.TOP, pady=(10, 0))
+
+        self.lbxProblems = tk.Listbox(frmLeft, height=5)
+        self.lbxProblems.pack(side=tk.TOP, fill=tk.X)
 
         ## Pack Args
         frmPackArgs = tk.Frame(frmLeft)
@@ -95,6 +104,9 @@ class TkVisualiser(tk.Toplevel):
         idx = self.lbxWidgets.curselection()[0]
         tkObj = self._widgets[idx]
 
+        self._selectWidget(tkObj)
+
+    def _selectWidget(self, tkObj):
         # reset the old value
         oldWidget, oldValue = self._selection
 
@@ -118,7 +130,10 @@ class TkVisualiser(tk.Toplevel):
             self._selectionParent = None, None
 
         # add the colour coding in the listbox itself
-        self._updateLbxColors(tkObj)
+        self._updateLbxWidgetsColors(tkObj)
+
+        # update the problems listbox
+        self._updateLbxProblems(tkObj)
 
         # update the pack args
         self.setPackArgs(tkObj)
@@ -128,6 +143,9 @@ class TkVisualiser(tk.Toplevel):
         self._objs = objs
 
         self._updateLbxWidgets()
+        self.lbxWidgets.selection_set(0)
+
+        self._selectWidget(self._objsRoot)
 
     def _updateLbxWidgets(self):
         self.lbxWidgets.delete(0, tk.END)
@@ -139,7 +157,7 @@ class TkVisualiser(tk.Toplevel):
         for line in str(self._objsRoot).splitlines():
             self.lbxWidgets.insert(tk.END, line)
 
-    def _updateLbxColors(self, tkObj):
+    def _updateLbxWidgetsColors(self, tkObj):
         for idx,elem in enumerate(self._widgets):
             # text color, set to match highlight colours
             if elem == tkObj:
@@ -151,10 +169,21 @@ class TkVisualiser(tk.Toplevel):
                 self.lbxWidgets.itemconfig(idx, fg='black')
 
             # background color, if not packed
-            if elem.hasError:
+            if elem.errors:
                 self.lbxWidgets.itemconfig(idx, bg=cfg.COLORS.ERROR)
-            elif elem.hasWarning:
+            elif elem.warnings:
                 self.lbxWidgets.itemconfig(idx, bg=cfg.COLORS.WARNING)
+
+    def _updateLbxProblems(self, tkObj):
+        self.lbxProblems.delete(0, tk.END)
+
+        for desc in tkObj.errors:
+            self.lbxProblems.insert(tk.END, desc)
+            self.lbxProblems.itemconfig(tk.END, fg=cfg.COLORS.ERROR)
+
+        for desc in tkObj.warnings:
+            self.lbxProblems.insert(tk.END, desc)
+            self.lbxProblems.itemconfig(tk.END, fg=cfg.COLORS.WARNING)
 
     def setPackArgs(self, tkObj):
         # Update our pack argument visualisations

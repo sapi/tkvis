@@ -19,13 +19,19 @@ _d = {
         'DUMMY_FRAME': 'gray60',
 
         'ERROR': 'red',
-        'WARNING': 'yellow',
+        'WARNING': 'orange',
         },
 
     'PACKINFO': {
         'WIDTH': 100,
         'HEIGHT': 100,
         'DUMMY_SIZE': 20,
+        },
+
+    'MESSAGES': {
+        'NOT_PACKED': 'Widget was not packed',
+        'BAD_ANCHOR': 'Anchor in same axis as pack is ineffective',
+        'INCONSISTENT_CHILD_PACKING': 'Child widgets are packed to different sides',
         },
     }
 

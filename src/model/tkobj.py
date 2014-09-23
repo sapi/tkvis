@@ -4,6 +4,7 @@
 # tk object from here will cause serious problems.
 import Tkinter as tk
 
+from src.config import cfg
 from namespaces import Namespace
 from widgets import describe
 
@@ -77,11 +78,35 @@ class TkObject(object):
         return not isinstance(self.obj, (tk.Tk, tk.Toplevel, tk.Menu))
 
     @property
-    def hasError(self):
-        # TODO: not finished
-        return self.needsPacking and not self.isPacked
+    def errors(self):
+        errors = []
+
+        if self.needsPacking and not self.isPacked:
+            errors.append(cfg.MESSAGES.NOT_PACKED)
+
+        return errors
 
     @property
-    def hasWarning(self):
-        # TODO: not finished
-        return False
+    def warnings(self):
+        # All our checking atm requires that the widget be packed
+        if not self.isPacked:
+            return []
+
+        warnings = []
+
+        # First check: does this have an anchor argument that doesn't seem to
+        # make sense (eg, N or S when packed to TOP or BOTTOM)
+        side = self.packArgs.side
+        anchor = self.packArgs.anchor
+
+        if (side in (tk.TOP, tk.BOTTOM) and anchor in (tk.N, tk.S)) \
+                or (side in (tk.LEFT, tk.RIGHT) and anchor in (tk.E, tk.W)):
+            warnings.append(cfg.MESSAGES.BAD_ANCHOR)
+
+        # Second check: has there been inconsistent packing in child widgets
+        childSides = [child.packArgs.side for child in self.children]
+
+        if childSides and len(set(childSides)) != 1:
+            warnings.append(cfg.MESSAGES.INCONSISTENT_CHILD_PACKING)
+
+        return warnings
