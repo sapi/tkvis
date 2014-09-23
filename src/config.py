@@ -17,6 +17,9 @@ _d = {
 
         'DUMMY_BACKGROUND': 'gray80',
         'DUMMY_FRAME': 'gray60',
+
+        'ERROR': 'red',
+        'WARNING': 'yellow',
         },
 
     'PACKINFO': {

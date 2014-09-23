@@ -151,8 +151,10 @@ class TkVisualiser(tk.Toplevel):
                 self.lbxWidgets.itemconfig(idx, fg='black')
 
             # background color, if not packed
-            if elem.needsPacking and not elem.packArgs:
-                self.lbxWidgets.itemconfig(idx, bg='red')
+            if elem.hasError:
+                self.lbxWidgets.itemconfig(idx, bg=cfg.COLORS.ERROR)
+            elif elem.hasWarning:
+                self.lbxWidgets.itemconfig(idx, bg=cfg.COLORS.WARNING)
 
     def setPackArgs(self, tkObj):
         # Update our pack argument visualisations

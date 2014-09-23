@@ -11,7 +11,7 @@ class TkObject(object):
         self._repr = describe(obj)
 
         self._children = []
-        self._packArgs = {}
+        self._packArgs = None
 
     def __str__(self, level=0):
         ret = '{indent}{value}\n'.format(indent='\t'*level, value=self._repr)
@@ -50,5 +50,19 @@ class TkObject(object):
         self._packArgs = val
 
     @property
+    def isPacked(self):
+        return self._packArgs is not None
+
+    @property
     def needsPacking(self):
         return not isinstance(self.obj, (tk.Tk, tk.Toplevel, tk.Menu))
+
+    @property
+    def hasError(self):
+        # TODO: not finished
+        return self.needsPacking and not self.isPacked
+
+    @property
+    def hasWarning(self):
+        # TODO: not finished
+        return False
