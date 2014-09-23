@@ -21,11 +21,12 @@ class ArrowCanvas(tk.Canvas):
     X = 'X'
     Y = 'Y'
 
-    def __init__(self, master, axis, *args, **kwargs):
+    def __init__(self, master, axis, flip=False, *args, **kwargs):
         tk.Canvas.__init__(self, master, *args, **kwargs)
 
         assert axis in (ArrowCanvas.X, ArrowCanvas.Y)
         self.axis = axis
+        self.flip = flip
 
         self.bind("<Configure>", self.resize)
 
@@ -41,16 +42,20 @@ class ArrowCanvas(tk.Canvas):
         ARROW_HEIGHT = int(0.3*parallel)
         ARROW_WIDTH = int(0.2*perpendicular)
         LINE_WIDTH = int(0.05*perpendicular)
+        TOP_MARGIN = 5
 
         points = [
                 (perpendicular/2 - ARROW_WIDTH/2, ARROW_HEIGHT),
-                (perpendicular/2, 0),
+                (perpendicular/2, TOP_MARGIN),
                 (perpendicular/2 + ARROW_WIDTH/2, ARROW_HEIGHT),
                 (perpendicular/2 + LINE_WIDTH/2, ARROW_HEIGHT),
                 (perpendicular/2 + LINE_WIDTH/2, h),
                 (perpendicular/2 - LINE_WIDTH/2, h),
                 (perpendicular/2 - LINE_WIDTH/2, ARROW_HEIGHT),
             ]
+
+        if self.flip:
+            points = [(par,parallel - perp) for par,perp in points]
 
         if self.axis == ArrowCanvas.X:
             points = [(y,x) for x,y in points]
@@ -113,6 +118,8 @@ class SideFrame(PackInfoFrame):
             fill = tk.Y
             axis = ArrowCanvas.X
 
+        flip = side in (tk.BOTTOM, tk.RIGHT)
+
         frmBefore = tk.Frame(self.frm, bg=OTHER_COLOR, **size)
         frmBefore.pack(side=side, fill=fill)
         self._framesToRemove.append(frmBefore)
@@ -121,7 +128,7 @@ class SideFrame(PackInfoFrame):
         frmPacked.pack(side=side)
         self._framesToRemove.append(frmPacked)
 
-        cvsArrow = ArrowCanvas(self.frm, axis)
+        cvsArrow = ArrowCanvas(self.frm, axis, flip=flip)
         cvsArrow.pack(side=side)
         self._framesToRemove.append(cvsArrow)
 
