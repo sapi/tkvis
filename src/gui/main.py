@@ -1,14 +1,11 @@
 import tkvis as tk
 
-from src.model.widgets \
-        import clear_highlight, highlight, HIGHLIGHT_COLOR, \
-               PARENT_HIGHLIGHT_COLOR
+from src.config import cfg
+from src.model.widgets import clear_highlight, highlight
 from packinfo import AnchorFrame, ExpandFrame, FillFrame, SideFrame
 
 
 class TkVisualiser(tk.Toplevel):
-    HIGHLIGHT_COLOR = 'red'
-
     def __init__(self, master, *args, **kwargs):
         tk.Toplevel.__init__(self, master, *args, **kwargs)
 
@@ -59,6 +56,8 @@ class TkVisualiser(tk.Toplevel):
         #### Right
         frmRight = tk.Frame(self)
         frmRight.pack(side=tk.LEFT)
+
+        ## Label
 
         ## Canvas
         self.cvsPackDisplay = tk.Canvas(frmRight)
@@ -122,9 +121,9 @@ class TkVisualiser(tk.Toplevel):
             # text color, set to match highlight colours
             if elem == tkObj:
                 self.lbxWidgets.itemconfig(idx,
-                        selectforeground=HIGHLIGHT_COLOR)
+                        selectforeground=cfg.COLORS.ACTIVE_VIEW)
             elif elem == tkObj.parent:
-                self.lbxWidgets.itemconfig(idx, fg=PARENT_HIGHLIGHT_COLOR)
+                self.lbxWidgets.itemconfig(idx, fg=cfg.COLORS.PARENT_VIEW)
             else:
                 self.lbxWidgets.itemconfig(idx, fg='black')
 
@@ -174,10 +173,10 @@ class TkVisualiser(tk.Toplevel):
 
         # draw the parent, if necessary
         if tkObj.parent is not None:
-            self._drawWidget(tkObj.parent, PARENT_HIGHLIGHT_COLOR)
+            self._drawWidget(tkObj.parent, cfg.COLORS.PARENT_VIEW)
 
         # draw the packed space on this guy
-        self._drawPackedSpace(tkObj, 'red4', side=side)
+        self._drawPackedSpace(tkObj, cfg.COLORS.PACKED_SPACE, side=side)
 
         # draw all of the filled space from views packed before this one
         # at the same level (in other words, the space from the parent)
@@ -187,11 +186,11 @@ class TkVisualiser(tk.Toplevel):
                     break
 
                 childSide = child.packArgs.get('side', tk.TOP)
-                self._drawPackedSpace(child, PARENT_HIGHLIGHT_COLOR,
+                self._drawPackedSpace(child, cfg.COLORS.PARENT_VIEW,
                         side=childSide)
 
         # and finally we draw the object itself on top
-        self._drawWidget(tkObj, HIGHLIGHT_COLOR)
+        self._drawWidget(tkObj, cfg.COLORS.ACTIVE_VIEW)
 
     def _drawWidget(self, tkObj, color):
         sx = self._objsRoot.obj.winfo_rootx()

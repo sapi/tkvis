@@ -1,5 +1,4 @@
-HIGHLIGHT_COLOR = 'red'
-PARENT_HIGHLIGHT_COLOR = 'green'
+from src.config import cfg
 
 
 class Widget(object):
@@ -27,7 +26,7 @@ class WidgetWithBackgroundHighlight(Widget):
     @classmethod
     def highlight(cls, tkWidget, asParent=False):
         oldBG = tkWidget.cget('bg')
-        col = PARENT_HIGHLIGHT_COLOR if asParent else HIGHLIGHT_COLOR
+        col = cfg.COLORS.PARENT_VIEW if asParent else cfg.COLORS.ACTIVE_VIEW
 
         tkWidget.config(bg=col)
 
@@ -46,7 +45,7 @@ class Button(WidgetWithTextDescription):
     @classmethod
     def highlight(cls, tkWidget, asParent=False):
         oldFG = tkWidget.cget('fg')
-        col = PARENT_HIGHLIGHT_COLOR if asParent else HIGHLIGHT_COLOR
+        col = cfg.COLORS.PARENT_VIEW if asParent else cfg.COLORS.ACTIVE_VIEW
 
         tkWidget.config(fg=col)
 

@@ -1,17 +1,16 @@
 import tkvis as tk
 
+from src.config import cfg
 from arrows import ArrowCanvas
 from borders import BorderedFrame
 
 
-ACTIVE_FRAME_COLOR = 'red'
-INACTIVE_FRAME_COLOR = 'gray80'
-OTHER_COLOR = 'gray60'
-EXAMPLE_FRAME_SIZE = 20
+cfg.PACKINFO.DUMMY_SIZE = 20
 
 
 class PackInfoFrame(tk.Frame):
-    def __init__(self, master, width=100, height=100, **kwargs):
+    def __init__(self, master, width=cfg.PACKINFO.WIDTH,
+            height=cfg.PACKINFO.HEIGHT, **kwargs):
         tk.Frame.__init__(self, master, **kwargs)
 
         self.lbl = tk.Label(self)
@@ -43,30 +42,30 @@ class SideFrame(PackInfoFrame):
 
         if side in (tk.TOP, tk.BOTTOM):
             innerSize = {
-                    'height': EXAMPLE_FRAME_SIZE,
+                    'height': cfg.PACKINFO.DUMMY_SIZE,
                     'width': self.width/4,
                 }
-            size = {'height': EXAMPLE_FRAME_SIZE}
+            size = {'height': cfg.PACKINFO.DUMMY_SIZE}
 
             fill = tk.X
             axis = ArrowCanvas.Y
         else:
             innerSize = {
-                    'width': EXAMPLE_FRAME_SIZE,
+                    'width': cfg.PACKINFO.DUMMY_SIZE,
                     'height': self.height/4,
                 }
-            size = {'width': EXAMPLE_FRAME_SIZE}
+            size = {'width': cfg.PACKINFO.DUMMY_SIZE}
 
             fill = tk.Y
             axis = ArrowCanvas.X
 
         flip = side in (tk.BOTTOM, tk.RIGHT)
 
-        frmBefore = tk.Frame(self.frm, bg=OTHER_COLOR, **size)
+        frmBefore = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_FRAME, **size)
         frmBefore.pack(side=side, fill=fill)
         self._framesToRemove.append(frmBefore)
 
-        frmPacked = tk.Frame(self.frm, bg=ACTIVE_FRAME_COLOR, **innerSize)
+        frmPacked = tk.Frame(self.frm, bg=cfg.COLORS.ACTIVE_VIEW, **innerSize)
         frmPacked.pack(side=side)
         self._framesToRemove.append(frmPacked)
 
@@ -86,28 +85,28 @@ class AnchorFrame(PackInfoFrame):
             fill = tk.X
             innerFrameArgs = {
                     'width': self.width/4,
-                    'height': EXAMPLE_FRAME_SIZE
+                    'height': cfg.PACKINFO.DUMMY_SIZE
                 }
         else:
             key = 'width'
             fill = tk.Y
             innerFrameArgs = {
-                    'width': EXAMPLE_FRAME_SIZE,
+                    'width': cfg.PACKINFO.DUMMY_SIZE,
                     'height': self.height/4
                 }
 
-        size = {key: EXAMPLE_FRAME_SIZE}
+        size = {key: cfg.PACKINFO.DUMMY_SIZE}
 
-        frmBefore = tk.Frame(self.frm, bg=OTHER_COLOR, **size)
+        frmBefore = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_FRAME, **size)
         frmBefore.pack(side=side, fill=fill)
         self._framesToRemove.append(frmBefore)
 
-        frmPacked = tk.Frame(self.frm, bg=INACTIVE_FRAME_COLOR, **size)
+        frmPacked = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_BACKGROUND, **size)
         frmPacked.pack(side=side, fill=fill)
         frmPacked.pack_propagate(0)
         self._framesToRemove.append(frmPacked)
 
-        frmAnchored = tk.Frame(frmPacked, bg=ACTIVE_FRAME_COLOR,
+        frmAnchored = tk.Frame(frmPacked, bg=cfg.COLORS.ACTIVE_VIEW,
                 **innerFrameArgs)
         frmAnchored.pack(side=side, anchor=anchor)
         self._framesToRemove.append(frmAnchored)
@@ -123,27 +122,27 @@ class FillFrame(PackInfoFrame):
             key = 'height'
             innerFrameArgs = {
                     'width': self.width/4,
-                    'height': EXAMPLE_FRAME_SIZE
+                    'height': cfg.PACKINFO.DUMMY_SIZE
                 }
         else:
             key = 'width'
             innerFrameArgs = {
-                    'width': EXAMPLE_FRAME_SIZE,
+                    'width': cfg.PACKINFO.DUMMY_SIZE,
                     'height': self.height/4
                 }
 
-        size = {key: EXAMPLE_FRAME_SIZE}
+        size = {key: cfg.PACKINFO.DUMMY_SIZE}
 
-        frmBefore = tk.Frame(self.frm, bg=OTHER_COLOR, **size)
+        frmBefore = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_FRAME, **size)
         frmBefore.pack(side=side, fill=tk.BOTH)
         self._framesToRemove.append(frmBefore)
 
-        frmPacked = tk.Frame(self.frm, bg=INACTIVE_FRAME_COLOR, **size)
+        frmPacked = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_BACKGROUND, **size)
         frmPacked.pack(side=side, fill=tk.BOTH)
         frmPacked.pack_propagate(0)
         self._framesToRemove.append(frmPacked)
 
-        frmFilled = tk.Frame(frmPacked, bg=ACTIVE_FRAME_COLOR,
+        frmFilled = tk.Frame(frmPacked, bg=cfg.COLORS.ACTIVE_VIEW,
                 **innerFrameArgs)
         frmFilled.pack(side=side, fill=fill)
         self._framesToRemove.append(frmFilled)
@@ -160,28 +159,28 @@ class ExpandFrame(PackInfoFrame):
             fill = tk.X
             innerFrameArgs = {
                     'width': self.width/4,
-                    'height': EXAMPLE_FRAME_SIZE
+                    'height': cfg.PACKINFO.DUMMY_SIZE
                 }
         else:
             key = 'width'
             fill = tk.Y
             innerFrameArgs = {
-                    'width': EXAMPLE_FRAME_SIZE,
+                    'width': cfg.PACKINFO.DUMMY_SIZE,
                     'height': self.height/4
                 }
 
-        size = {key: EXAMPLE_FRAME_SIZE}
+        size = {key: cfg.PACKINFO.DUMMY_SIZE}
 
-        frmBefore = tk.Frame(self.frm, bg=OTHER_COLOR, **size)
+        frmBefore = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_FRAME, **size)
         frmBefore.pack(side=side, fill=fill)
         self._framesToRemove.append(frmBefore)
 
-        frmPacked = tk.Frame(self.frm, bg=INACTIVE_FRAME_COLOR, **size)
+        frmPacked = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_BACKGROUND, **size)
         frmPacked.pack(side=side, fill=tk.BOTH, expand=expand)
         frmPacked.pack_propagate(0)
         self._framesToRemove.append(frmPacked)
 
-        frmExpanded = tk.Frame(frmPacked, bg=ACTIVE_FRAME_COLOR,
+        frmExpanded = tk.Frame(frmPacked, bg=cfg.COLORS.ACTIVE_VIEW,
                 **innerFrameArgs)
         frmExpanded.pack(side=side, expand=expand)
         self._framesToRemove.append(frmExpanded)

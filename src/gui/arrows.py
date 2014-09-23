@@ -1,5 +1,7 @@
 import Tkinter as tk
 
+from src.config import cfg
+
 
 class ArrowCanvas(tk.Canvas):
     X = 'X'
@@ -23,10 +25,12 @@ class ArrowCanvas(tk.Canvas):
         parallel = h if self.axis == ArrowCanvas.Y else w
         perpendicular = w if self.axis == ArrowCanvas.Y else h
 
-        ARROW_HEIGHT = int(0.3*parallel)
-        ARROW_WIDTH = int(0.2*perpendicular)
-        LINE_WIDTH = int(0.05*perpendicular)
-        TOP_MARGIN = 5
+        props = cfg.ARROW_PROPS
+
+        ARROW_HEIGHT = int(props.HEAD_HEIGHT_FRAC*parallel)
+        ARROW_WIDTH = int(props.HEAD_WIDTH_FRAC*perpendicular)
+        LINE_WIDTH = int(props.LINE_WIDTH_FRAC*perpendicular)
+        TOP_MARGIN = props.TOP_SPACE_PX
 
         points = [
                 (perpendicular/2 - ARROW_WIDTH/2, ARROW_HEIGHT),
