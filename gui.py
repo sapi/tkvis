@@ -16,21 +16,56 @@ class TkVisualiser(tk.Toplevel):
         # change window settings
         self.title('TK Visualiser')
 
-        # set up the window
-        frm = tk.Frame(self)
-        frm.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
+        #### Set up the window
+        ##      Left            Right
+        ##
+        ##    [listbox]
+        ## [side] [anchor]  [pack details]
+        ## [fill] [expand]
+        ##
 
-        self.lbxWidgets = tk.Listbox(frm)
-        self.lbxWidgets.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
+        #### Left
+        frmLeft = tk.Frame(self)
+        frmLeft.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
+
+        self.lbxWidgets = tk.Listbox(frmLeft)
+        self.lbxWidgets.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
         self.lbxWidgets.bind('<<ListboxSelect>>',
                 self.lbxWidgetsSelectionChanged)
 
-        self.frmDynamic = tk.Frame(frm)
-        self.frmDynamic.pack(side=tk.LEFT)
+        ## Pack Args
+        frmPackArgs = tk.Frame(frmLeft)
+        frmPackArgs.pack(side=tk.TOP)
 
-        self.dynamicFrames = []
+        # Side and Anchor
+        frmTop = tk.Frame(frmPackArgs)
+        frmTop.pack(side=tk.TOP)
 
-        # set up local vars
+        self.frmSide = SideFrame(frmTop)
+        self.frmSide.pack(side=tk.LEFT, padx=10, pady=10)
+
+        self.frmAnchor = AnchorFrame(frmTop)
+        self.frmAnchor.pack(side=tk.LEFT, padx=10, pady=10)
+
+        # Fill and Expand
+        frmBottom = tk.Frame(frmPackArgs)
+        frmBottom.pack(side=tk.TOP)
+
+        self.frmFill = FillFrame(frmBottom)
+        self.frmFill.pack(side=tk.LEFT, padx=10, pady=10)
+
+        self.frmExpand = ExpandFrame(frmBottom)
+        self.frmExpand.pack(side=tk.LEFT, padx=10, pady=10)
+
+        #### Right
+        frmRight = tk.Frame(self)
+        frmRight.pack(side=tk.LEFT)
+
+        ## Canvas
+        self.cvsPackDisplay = tk.Canvas(frmRight)
+        self.cvsPackDisplay.pack(side=tk.TOP)
+
+        #### Set up local vars
         self._selection = None, None  # widget, bg
         self._selectionParent = None, None
 
@@ -99,54 +134,51 @@ class TkVisualiser(tk.Toplevel):
                 self.lbxWidgets.itemconfig(idx, bg='red')
 
     def setPackArgs(self, tkObj):
+        # Update our pack argument visualisations
         side = tkObj.packArgs.get('side', tk.TOP)
         anchor = tkObj.packArgs.get('anchor', tk.CENTER)
         fill = tkObj.packArgs.get('fill', tk.NONE)
         expand = tkObj.packArgs.get('expand', False)
 
-        # generate pack thingy
-        for frm in self.dynamicFrames:
-            frm.destroy()
+        self.frmSide.update(side)
+        self.frmAnchor.update(side, anchor)
+        self.frmFill.update(side, fill)
+        self.frmExpand.update(side, expand)
 
-        # side, anchor, fill, expand
-        frmLeft = tk.Frame(self.frmDynamic)
-        frmLeft.pack(side=tk.LEFT)
-        self.dynamicFrames.append(frmLeft)
-
-        frmSide = SideFrame(frmLeft, side)
-        frmSide.pack(side=tk.TOP)
-        self.dynamicFrames.append(frmSide)
-
-        frmAnchor = AnchorFrame(frmLeft, side, anchor)
-        frmAnchor.pack(side=tk.TOP)
-        self.dynamicFrames.append(frmAnchor)
-
-        frmFill = FillFrame(frmLeft, side, fill)
-        frmFill.pack(side=tk.TOP)
-        self.dynamicFrames.append(frmFill)
-
-        frmExpand = ExpandFrame(frmLeft, side, expand)
-        frmExpand.pack(side=tk.TOP)
-        self.dynamicFrames.append(frmExpand)
-
-        # space in window
+        # Now update our canvas, which shows the actual location of things in
+        # the attached program
         window = self._objsRoot.obj
         sw = window.winfo_width()
         sh = window.winfo_height()
 
-        cvsRight = tk.Canvas(self.frmDynamic, width=sw, height=sh)
-        cvsRight.pack(side=tk.LEFT)
-        self.dynamicFrames.append(cvsRight)
+        self.cvsPackDisplay.config(width=sw, height=sh)
+
+        self._redrawCanvas(tkObj)
+
+    def _redrawCanvas(self, tkObj):
+        # grab necessary info
+        side = tkObj.packArgs.get('side', tk.TOP)
+
+        window = self._objsRoot.obj
+        sw = window.winfo_width()
+        sh = window.winfo_height()
 
         # first, clear out the canvas with a recognisable colour
-        cvsRight.create_rectangle(0, 0, sw, sh, fill='gray', outline='gray')
+        self.cvsPackDisplay.delete(tk.ALL)
+
+        self.cvsPackDisplay.create_rectangle(
+                0, 0,
+                sw, sh,
+                fill='gray',
+                outline='gray',
+            )
 
         # draw the parent, if necessary
         if tkObj.parent is not None:
-            self._drawWidget(cvsRight, tkObj.parent, PARENT_HIGHLIGHT_COLOR)
+            self._drawWidget(tkObj.parent, PARENT_HIGHLIGHT_COLOR)
 
         # draw the packed space on this guy
-        self._drawPackedSpace(cvsRight, tkObj, 'red4', side=side)
+        self._drawPackedSpace(tkObj, 'red4', side=side)
 
         # draw all of the filled space from views packed before this one
         # at the same level (in other words, the space from the parent)
@@ -156,13 +188,13 @@ class TkVisualiser(tk.Toplevel):
                     break
 
                 childSide = child.packArgs.get('side', tk.TOP)
-                self._drawPackedSpace(cvsRight, child, PARENT_HIGHLIGHT_COLOR,
+                self._drawPackedSpace(child, PARENT_HIGHLIGHT_COLOR,
                         side=childSide)
 
         # and finally we draw the object itself on top
-        self._drawWidget(cvsRight, tkObj, HIGHLIGHT_COLOR)
+        self._drawWidget(tkObj, HIGHLIGHT_COLOR)
 
-    def _drawWidget(self, canvas, tkObj, color):
+    def _drawWidget(self, tkObj, color):
         sx = self._objsRoot.obj.winfo_rootx()
         sy = self._objsRoot.obj.winfo_rooty()
 
@@ -171,14 +203,14 @@ class TkVisualiser(tk.Toplevel):
         w = tkObj.obj.winfo_width()
         h = tkObj.obj.winfo_height()
 
-        canvas.create_rectangle(
+        self.cvsPackDisplay.create_rectangle(
                 x, y,
                 x + w, y + h,
                 fill=color,
                 outline=color,
             )
 
-    def _drawPackedSpace(self, canvas, tkObj, color, side=tk.TOP):
+    def _drawPackedSpace(self, tkObj, color, side=tk.TOP):
         sx = self._objsRoot.obj.winfo_rootx()
         sy = self._objsRoot.obj.winfo_rooty()
 
@@ -196,14 +228,14 @@ class TkVisualiser(tk.Toplevel):
             ph = tkObj.parent.obj.winfo_height()
 
             if side in (tk.LEFT, tk.RIGHT):
-                canvas.create_rectangle(
+                self.cvsPackDisplay.create_rectangle(
                         vx, py,
                         vx + vw, py + ph,
                         fill=color,
                         outline=color,
                     )
             else:
-                canvas.create_rectangle(
+                self.cvsPackDisplay.create_rectangle(
                         px, vy,
                         px + pw, vy + vh,
                         fill=color,
