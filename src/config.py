@@ -31,7 +31,7 @@ _d = {
     'MESSAGES': {
         'NOT_PACKED': 'Widget was not packed',
         'BAD_ANCHOR': 'Anchor in same axis as pack is ineffective',
-        'INCONSISTENT_CHILD_PACKING': 'Child widgets are packed to different sides',
+        'INCONSISTENT_CHILD_PACKING': 'Inconsistent pack direction in children',
         },
     }
 
