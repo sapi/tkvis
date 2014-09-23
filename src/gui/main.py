@@ -6,7 +6,18 @@ from packinfo import AnchorFrame, ExpandFrame, FillFrame, SideFrame
 
 
 class TkVisualiser(tk.Toplevel):
+    '''
+    The top-level Tk Visualiser object.
+
+    '''
     def __init__(self, master, *args, **kwargs):
+        '''
+        Create a new instance of the TkVisualiser class.
+
+        @param tk.Widget $master
+          The tk widget to create the TkVisualiser in.
+
+        '''
         tk.Toplevel.__init__(self, master, *args, **kwargs)
 
         # change window settings
@@ -242,6 +253,16 @@ class TkVisualiser(tk.Toplevel):
 
 
 def create_gui(root):
+    '''
+    Create and configure the GUI.
+
+    @param tk.Widget $root
+      The root Tk object.
+
+    @retval TkVisualiser
+      The configured TkVisualiser instance.
+
+    '''
     window = TkVisualiser(root)
 
     return window

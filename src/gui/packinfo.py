@@ -5,12 +5,31 @@ from arrows import ArrowCanvas
 from borders import BorderedFrame
 
 
-cfg.PACKINFO.DUMMY_SIZE = 20
-
-
 class PackInfoFrame(tk.Frame):
+    '''
+    A frame for displaying information about a specific pack argument.
+
+    Contains a descriptive label, and a bordered frame for drawing in.
+
+    Subclasses must override .update with appropriate keyword arguments.
+
+    '''
     def __init__(self, master, width=cfg.PACKINFO.WIDTH,
             height=cfg.PACKINFO.HEIGHT, **kwargs):
+        '''
+        Create a new instance of the PackInfoFrame class.
+
+        @param tk.Widget $master
+          The tk widget to create the PackInfoFrame in.
+
+        @param int $width [optional]
+          The width of the frame.  This defaults to the value given in the
+          config file.
+        @param int $height [optional]
+          The height of the frame.  This defaults to the value given in the
+          config file.
+
+        '''
         tk.Frame.__init__(self, master, **kwargs)
 
         self.lbl = tk.Label(self)
@@ -25,13 +44,23 @@ class PackInfoFrame(tk.Frame):
         self.width = width
         self.height = height
 
-        self._framesToRemove = []
+        self._viewsToRemove = []
 
     def update(self, **kwargs):
-        for frm in self._framesToRemove:
+        '''
+        Update the pack info.
+
+        Subclasses will override with appropiate arguments and will create
+        all necessary subviews.
+
+        The default implementation simply destroys all views marked for
+        removal.  It is assumed that subclasses will call this implementation.
+
+        '''
+        for frm in self._viewsToRemove:
             frm.destroy()
 
-        self._framesToRemove = []
+        self._viewsToRemove = []
 
 
 class SideFrame(PackInfoFrame):
@@ -63,15 +92,15 @@ class SideFrame(PackInfoFrame):
 
         frmBefore = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_FRAME, **size)
         frmBefore.pack(side=side, fill=fill)
-        self._framesToRemove.append(frmBefore)
+        self._viewsToRemove.append(frmBefore)
 
         frmPacked = tk.Frame(self.frm, bg=cfg.COLORS.ACTIVE_VIEW, **innerSize)
         frmPacked.pack(side=side)
-        self._framesToRemove.append(frmPacked)
+        self._viewsToRemove.append(frmPacked)
 
         cvsArrow = ArrowCanvas(self.frm, axis, flip=flip)
         cvsArrow.pack(side=side)
-        self._framesToRemove.append(cvsArrow)
+        self._viewsToRemove.append(cvsArrow)
 
 
 class AnchorFrame(PackInfoFrame):
@@ -99,17 +128,17 @@ class AnchorFrame(PackInfoFrame):
 
         frmBefore = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_FRAME, **size)
         frmBefore.pack(side=side, fill=fill)
-        self._framesToRemove.append(frmBefore)
+        self._viewsToRemove.append(frmBefore)
 
         frmPacked = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_BACKGROUND, **size)
         frmPacked.pack(side=side, fill=fill)
         frmPacked.pack_propagate(0)
-        self._framesToRemove.append(frmPacked)
+        self._viewsToRemove.append(frmPacked)
 
         frmAnchored = tk.Frame(frmPacked, bg=cfg.COLORS.ACTIVE_VIEW,
                 **innerFrameArgs)
         frmAnchored.pack(side=side, anchor=anchor)
-        self._framesToRemove.append(frmAnchored)
+        self._viewsToRemove.append(frmAnchored)
 
 
 class FillFrame(PackInfoFrame):
@@ -135,17 +164,17 @@ class FillFrame(PackInfoFrame):
 
         frmBefore = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_FRAME, **size)
         frmBefore.pack(side=side, fill=tk.BOTH)
-        self._framesToRemove.append(frmBefore)
+        self._viewsToRemove.append(frmBefore)
 
         frmPacked = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_BACKGROUND, **size)
         frmPacked.pack(side=side, fill=tk.BOTH)
         frmPacked.pack_propagate(0)
-        self._framesToRemove.append(frmPacked)
+        self._viewsToRemove.append(frmPacked)
 
         frmFilled = tk.Frame(frmPacked, bg=cfg.COLORS.ACTIVE_VIEW,
                 **innerFrameArgs)
         frmFilled.pack(side=side, fill=fill)
-        self._framesToRemove.append(frmFilled)
+        self._viewsToRemove.append(frmFilled)
 
 
 class ExpandFrame(PackInfoFrame):
@@ -173,14 +202,14 @@ class ExpandFrame(PackInfoFrame):
 
         frmBefore = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_FRAME, **size)
         frmBefore.pack(side=side, fill=fill)
-        self._framesToRemove.append(frmBefore)
+        self._viewsToRemove.append(frmBefore)
 
         frmPacked = tk.Frame(self.frm, bg=cfg.COLORS.DUMMY_BACKGROUND, **size)
         frmPacked.pack(side=side, fill=tk.BOTH, expand=expand)
         frmPacked.pack_propagate(0)
-        self._framesToRemove.append(frmPacked)
+        self._viewsToRemove.append(frmPacked)
 
         frmExpanded = tk.Frame(frmPacked, bg=cfg.COLORS.ACTIVE_VIEW,
                 **innerFrameArgs)
         frmExpanded.pack(side=side, expand=expand)
-        self._framesToRemove.append(frmExpanded)
+        self._viewsToRemove.append(frmExpanded)

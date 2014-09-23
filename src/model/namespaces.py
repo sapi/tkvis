@@ -17,6 +17,11 @@ class _AttributeHolder(object):
 
 
 class Namespace(_AttributeHolder):
+    '''
+    Recursively transforms a set of keyword arguments into accessible
+    attributes (which behaves similarly to a python module).
+
+    '''
     def __init__(self, **kwargs):
         for name in kwargs:
             val = kwargs[name]

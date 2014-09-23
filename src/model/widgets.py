@@ -2,16 +2,62 @@ from src.config import cfg
 
 
 class Widget(object):
+    '''
+    The Widget class contains class methods designed to work with certain
+    kinds of Tkinter objects.
+
+    This is an abstract base class and should not be used directly.
+
+    '''
     @classmethod
     def descriptionOf(cls, tkWidget):
+        '''
+        Return a description of the given widget.
+
+        @param tk.Widget $tkWidget
+          The widget to describe.
+
+        @retval str
+          The description of the widget.
+
+        '''
         return tkWidget.__class__.__name__
 
     @classmethod
     def higlight(cls, tkWidget, asParent=False):
+        '''
+        Highlight the given widget.
+
+        The means of doing this may depend on the type of the widget.
+
+        Different types of widgets are intended to be handled by different
+        subclasses of Widget.
+
+        @param tk.Widget $tkWidget
+          The widget to highlight.
+
+        @param bool $asParent [optional]
+          Whether the parent highlighting style should be used.  Defaults to
+          False.
+
+        @retval object
+          The old value which was changed by the highlight.
+
+        '''
         raise NotImplementedError()
 
     @classmethod
     def clearHighlight(cls, tkWidget, old):
+        '''
+        Clear the highlight on the given widget, and restore the given value.
+
+        @param tk.Widget $tkWidget
+          The widget to clear the highlight from.
+        @param object $old
+          The value to restore (most often the old value changed by a call
+          to .highlight).
+
+        '''
         raise NotImplementedError()
 
 
@@ -69,15 +115,49 @@ DEFAULT = WidgetWithBackgroundHighlight
 
 
 def describe(tkWidget):
+    '''
+    Describe the given widget.
+
+    @param tk.Widget $tkWidget
+      The widget to describe.
+
+    @retval str
+      The description of the widget.
+
+    '''
     name = tkWidget.__class__.__name__
     return WIDGETS.get(name, DEFAULT).descriptionOf(tkWidget)
 
 
 def highlight(tkWidget, asParent=False):
+    '''
+    Highlight the given widget.
+
+    @param tk.Widget $tkWidget
+      The widget to highlight.
+
+    @param bool $asParent [optional]
+      Whether the parent highlighting style should be used.  Defaults to
+      False.
+
+    @retval object
+      The old value which was changed by the highlight.
+
+    '''
     name = tkWidget.__class__.__name__
     return WIDGETS.get(name, DEFAULT).highlight(tkWidget, asParent=asParent)
 
 
 def clear_highlight(tkWidget, old):
+    '''
+    Clear the highlight on the given widget, and restore the given value.
+
+    @param tk.Widget $tkWidget
+      The widget to clear the highlight from.
+    @param object $old
+      The value to restore (most often the old value changed by a call
+      to .highlight).
+
+    '''
     name = tkWidget.__class__.__name__
     return WIDGETS.get(name, DEFAULT).clearHighlight(tkWidget, old)

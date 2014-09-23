@@ -3,11 +3,22 @@ from functools import wraps
 from src.model.tkobj import TkObject
 
 
+# We keep track of the root object, as well as all encountered objects, in a
+# pair of global variables.
+# This does not pose a huge problem, as by design this module should be a
+# singleton for the life of the app.
+#
+# NB: There are potential thread-safety issues with this approach.
+#     Here be dragons!
+#
 OBJS_ROOT = None
 OBJS = {}
 
 
 def replace_creation(cls, isRootObj=False):
+    # we don't want to touch anything which isn't a class
+    # a quick and dirty way to do this, which ties in nicely with our purposes,
+    # is to check if it has an __init__ method
     if not hasattr(cls, '__init__'):
         return cls
 
@@ -15,6 +26,7 @@ def replace_creation(cls, isRootObj=False):
 
     @wraps(cls.__init__)
     def f(self, *args, **kwargs):
+        # NB: must call oldinit *BEFORE* logging
         oldinit(self, *args, **kwargs)
 
         if isRootObj:

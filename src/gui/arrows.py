@@ -4,10 +4,32 @@ from src.config import cfg
 
 
 class ArrowCanvas(tk.Canvas):
+    '''
+    Displays an arrow in a canvas.
+
+    The appearance of the arrow is determined by settings in the config file.
+
+    '''
     X = 'X'
     Y = 'Y'
 
     def __init__(self, master, axis, flip=False, *args, **kwargs):
+        '''
+        Create a new instance of the ArrowCanvas class.
+
+        @param tk.Widget $master
+          The tk widget to create the ArrowCanvas in.
+        @param str $axis
+          The axis in which to draw the arrow. This must be one of
+          ArrowCanvas.X (for a horizontal arrow) or ArrowCanvas.Y (for a
+          vertical arrow)
+
+        @param bool $flip [optional]
+          Whether or not the arrow should be flipped.  An unflipped arrow
+          points to the top or the left, depending on the axis.  Defaults to
+          unflipped (False).
+
+        '''
         tk.Canvas.__init__(self, master, *args, **kwargs)
 
         assert axis in (ArrowCanvas.X, ArrowCanvas.Y)
