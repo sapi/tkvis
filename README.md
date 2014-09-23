@@ -12,7 +12,7 @@ The widget hierarchy for the hosted app is shown in a listbox, with the selected
 A visual indication of four key pack arguments (`side`, `anchor`, `fill`, and `expand`) is displayed below the listbox.
 
 On the right, the actual position of the widget and its parent are shown.
-In addition, any wasted space from the geometry manager is highlighted.
+In addition, any wasted space from the geometry manager is highlighted (the dark red colour in the above image).
 This is useful for detecting bugs which arise from, for example, mixing `side` arguments to pack.
 
 ### Hosted App
