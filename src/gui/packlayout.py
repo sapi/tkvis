@@ -37,7 +37,7 @@ class PackLayoutCanvas(tk.Canvas):
                 if child is tkObj:
                     break
 
-                childSide = child.packArgs.get('side', tk.TOP)
+                childSide = child.packArgs.side
                 self._drawPackedSpace(child, rootTkObj, cfg.COLORS.PARENT_VIEW,
                         side=childSide)
 
