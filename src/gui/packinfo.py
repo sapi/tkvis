@@ -107,7 +107,7 @@ class AnchorFrame(PackInfoFrame):
     def update(self, side=tk.TOP, anchor=tk.CENTER):
         PackInfoFrame.update(self, side=side, anchor=anchor)
 
-        self.lbl.config(text='anchor={}'.format(side.upper()))
+        self.lbl.config(text='anchor={}'.format(anchor.upper()))
 
         if side in (tk.TOP, tk.BOTTOM):
             key = 'height'
