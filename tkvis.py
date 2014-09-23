@@ -1,6 +1,6 @@
 import Tkinter
 
-import replacement as _replacement
+import src.monkey.replacement as _replacement
 
 
 # set up to log all creation and pack calls

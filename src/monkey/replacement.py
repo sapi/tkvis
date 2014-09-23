@@ -1,6 +1,6 @@
 from functools import wraps
 
-from layout import TkObject
+from src.model.tkobj import TkObject
 
 
 OBJS_ROOT = None
@@ -90,7 +90,7 @@ def run(root):
     mainloop = root.mainloop
 
     def f():
-        from gui import create_gui
+        from src.gui.main import create_gui
 
         window = create_gui(root)
         OBJS_ROOT.removeChild(OBJS[id(window)])

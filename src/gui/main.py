@@ -1,10 +1,9 @@
-from PIL import Image, ImageTk
-import os
 import tkvis as tk
 
-from widgets import clear_highlight, highlight, \
-        HIGHLIGHT_COLOR, PARENT_HIGHLIGHT_COLOR
-from tkcrap import AnchorFrame, ExpandFrame, FillFrame, SideFrame
+from src.model.widgets \
+        import clear_highlight, highlight, HIGHLIGHT_COLOR, \
+               PARENT_HIGHLIGHT_COLOR
+from packinfo import AnchorFrame, ExpandFrame, FillFrame, SideFrame
 
 
 class TkVisualiser(tk.Toplevel):
