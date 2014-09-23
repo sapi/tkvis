@@ -3,6 +3,7 @@ import tkvis as tk
 from src.config import cfg
 from src.model.widgets import clear_highlight, highlight
 from packinfo import AnchorFrame, ExpandFrame, FillFrame, SideFrame
+from packlayout import PackLayoutCanvas
 
 
 class TkVisualiser(tk.Toplevel):
@@ -26,7 +27,7 @@ class TkVisualiser(tk.Toplevel):
         #### Set up the window
         ##      Left            Right
         ##
-        ##    [listbox]
+        ##    [listbox]        [labels]
         ## [side] [anchor]  [pack details]
         ## [fill] [expand]
         ##
@@ -68,11 +69,22 @@ class TkVisualiser(tk.Toplevel):
         frmRight = tk.Frame(self)
         frmRight.pack(side=tk.LEFT)
 
-        ## Label
+        ## Labels
+        tk.Label(frmRight,
+                text='Selected Widget: {}'.format(cfg.COLORS.ACTIVE_VIEW)
+            ).pack(side=tk.TOP)
+
+        tk.Label(frmRight,
+                text='Parent Widget: {}'.format(cfg.COLORS.PARENT_VIEW)
+            ).pack(side=tk.TOP)
+
+        tk.Label(frmRight,
+                text='Reserved Space: {}'.format(cfg.COLORS.RESERVED_SPACE)
+            ).pack(side=tk.TOP)
 
         ## Canvas
-        self.cvsPackDisplay = tk.Canvas(frmRight)
-        self.cvsPackDisplay.pack(side=tk.TOP)
+        self.cvsPackLayout = PackLayoutCanvas(frmRight)
+        self.cvsPackLayout.pack(side=tk.TOP)
 
         #### Set up local vars
         self._selection = None, None  # widget, bg
@@ -160,96 +172,8 @@ class TkVisualiser(tk.Toplevel):
         sw = window.winfo_width()
         sh = window.winfo_height()
 
-        self.cvsPackDisplay.config(width=sw, height=sh)
-
-        self._redrawCanvas(tkObj)
-
-    def _redrawCanvas(self, tkObj):
-        # grab necessary info
-        side = tkObj.packArgs.get('side', tk.TOP)
-
-        window = self._objsRoot.obj
-        sw = window.winfo_width()
-        sh = window.winfo_height()
-
-        # first, clear out the canvas with a recognisable colour
-        self.cvsPackDisplay.delete(tk.ALL)
-
-        self.cvsPackDisplay.create_rectangle(
-                0, 0,
-                sw, sh,
-                fill='gray',
-                outline='gray',
-            )
-
-        # draw the parent, if necessary
-        if tkObj.parent is not None:
-            self._drawWidget(tkObj.parent, cfg.COLORS.PARENT_VIEW)
-
-        # draw the packed space on this guy
-        self._drawPackedSpace(tkObj, cfg.COLORS.PACKED_SPACE, side=side)
-
-        # draw all of the filled space from views packed before this one
-        # at the same level (in other words, the space from the parent)
-        if tkObj.parent is not None:
-            for child in tkObj.parent.children:
-                if child is tkObj:
-                    break
-
-                childSide = child.packArgs.get('side', tk.TOP)
-                self._drawPackedSpace(child, cfg.COLORS.PARENT_VIEW,
-                        side=childSide)
-
-        # and finally we draw the object itself on top
-        self._drawWidget(tkObj, cfg.COLORS.ACTIVE_VIEW)
-
-    def _drawWidget(self, tkObj, color):
-        sx = self._objsRoot.obj.winfo_rootx()
-        sy = self._objsRoot.obj.winfo_rooty()
-
-        x = tkObj.obj.winfo_rootx() - sx
-        y = tkObj.obj.winfo_rooty() - sy
-        w = tkObj.obj.winfo_width()
-        h = tkObj.obj.winfo_height()
-
-        self.cvsPackDisplay.create_rectangle(
-                x, y,
-                x + w, y + h,
-                fill=color,
-                outline=color,
-            )
-
-    def _drawPackedSpace(self, tkObj, color, side=tk.TOP):
-        sx = self._objsRoot.obj.winfo_rootx()
-        sy = self._objsRoot.obj.winfo_rooty()
-
-        vx = tkObj.obj.winfo_rootx() - sx
-        vy = tkObj.obj.winfo_rooty() - sy
-        vw = tkObj.obj.winfo_width()
-        vh = tkObj.obj.winfo_height()
-
-        # we want to extend over the entirety of the other axis (so if we
-        # packed on to the left or right hand side, extend vertically)
-        if tkObj.parent is not None:
-            px = tkObj.parent.obj.winfo_rootx() - sx
-            py = tkObj.parent.obj.winfo_rooty() - sy
-            pw = tkObj.parent.obj.winfo_width()
-            ph = tkObj.parent.obj.winfo_height()
-
-            if side in (tk.LEFT, tk.RIGHT):
-                self.cvsPackDisplay.create_rectangle(
-                        vx, py,
-                        vx + vw, py + ph,
-                        fill=color,
-                        outline=color,
-                    )
-            else:
-                self.cvsPackDisplay.create_rectangle(
-                        px, vy,
-                        px + pw, vy + vh,
-                        fill=color,
-                        outline=color,
-                    )
+        self.cvsPackLayout.config(width=sw, height=sh)
+        self.cvsPackLayout.redraw(tkObj, self._objsRoot)
 
 
 def create_gui(root):

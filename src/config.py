@@ -13,7 +13,7 @@ _d = {
         'ACTIVE_VIEW': 'red',
         'PARENT_VIEW': 'green',
 
-        'PACKED_SPACE': 'red4',
+        'RESERVED_SPACE': 'red4',
 
         'DUMMY_BACKGROUND': 'gray80',
         'DUMMY_FRAME': 'gray60',
