@@ -1,9 +1,21 @@
+# We need a Tkinter import here (cf tkvis) because this module is imported
+# from tkvis.
+# Should limit the usage here as much as possible, as, eg, instantiating a
+# tk object from here will cause serious problems.
 import Tkinter as tk
 
+from namespaces import Namespace
 from widgets import describe
 
 
 class TkObject(object):
+    DEFAULT_PACK_ARGS = {
+            'side': tk.TOP,
+            'anchor': tk.CENTER,
+            'fill': tk.NONE,
+            'expand': tk.FALSE,
+        }
+
     def __init__(self, obj, parent=None):
         self.obj = obj
         self.parent = parent
@@ -11,7 +23,10 @@ class TkObject(object):
         self._repr = describe(obj)
 
         self._children = []
-        self._packArgs = None
+        self._isPacked = False
+
+        # NB: must NOT use the seter
+        self._packArgs = Namespace(**TkObject.DEFAULT_PACK_ARGS)
 
     def __str__(self, level=0):
         ret = '{indent}{value}\n'.format(indent='\t'*level, value=self._repr)
@@ -46,12 +61,16 @@ class TkObject(object):
         return self._packArgs
 
     @packArgs.setter
-    def packArgs(self, val):
-        self._packArgs = val
+    def packArgs(self, kwargs):
+        keys = set(kwargs.keys()).union(set(TkObject.DEFAULT_PACK_ARGS.keys()))
+        d = {k: kwargs.get(k, TkObject.DEFAULT_PACK_ARGS.get(k)) for k in keys}
+
+        self._packArgs = Namespace(**d)
+        self._isPacked = True
 
     @property
     def isPacked(self):
-        return self._packArgs is not None
+        return self._isPacked
 
     @property
     def needsPacking(self):

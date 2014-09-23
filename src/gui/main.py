@@ -158,10 +158,10 @@ class TkVisualiser(tk.Toplevel):
 
     def setPackArgs(self, tkObj):
         # Update our pack argument visualisations
-        side = tkObj.packArgs.get('side', tk.TOP)
-        anchor = tkObj.packArgs.get('anchor', tk.CENTER)
-        fill = tkObj.packArgs.get('fill', tk.NONE)
-        expand = tkObj.packArgs.get('expand', False)
+        side = tkObj.packArgs.side
+        anchor = tkObj.packArgs.anchor
+        fill = tkObj.packArgs.fill
+        expand = tkObj.packArgs.expand
 
         self.frmSide.update(side)
         self.frmAnchor.update(side, anchor)

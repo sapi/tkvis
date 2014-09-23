@@ -6,7 +6,7 @@ from src.config import cfg
 class PackLayoutCanvas(tk.Canvas):
     def redraw(self, tkObj, rootTkObj):
         # grab necessary info
-        side = tkObj.packArgs.get('side', tk.TOP)
+        side = tkObj.packArgs.side
 
         window = rootTkObj.obj
         sw = window.winfo_width()
