@@ -23,6 +23,7 @@ class TkVisualiser(tk.Toplevel):
 
         #### Change window settings
         self.title('TK Visualiser')
+        self.protocol('WM_DELETE_WINDOW', self.exit)
 
         #### Set up the window
         ##      Left            Right
@@ -98,6 +99,10 @@ class TkVisualiser(tk.Toplevel):
         #### Set up local vars
         self._selection = None, None  # widget, bg
         self._selectionParent = None, None
+
+    def exit(self):
+        # bring down the hosted app when we're closed
+        self._objsRoot.obj.destroy()
 
     def lbxWidgetsSelectionChanged(self, evt):
         # get selection
