@@ -33,6 +33,8 @@ _d = {
         'BAD_ANCHOR': 'Anchor in same axis as pack is ineffective',
         'INCONSISTENT_CHILD_PACKING': 'Inconsistent pack direction in children',
         },
+
+    'LISTBOX_FONT': 'Courier',
     }
 
 

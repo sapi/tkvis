@@ -30,7 +30,7 @@ class TkObject(object):
         self._packArgs = Namespace(**TkObject.DEFAULT_PACK_ARGS)
 
     def __str__(self, level=0):
-        ret = '{indent}{value}\n'.format(indent='\t'*level, value=self._repr)
+        ret = '{indent}{value}\n'.format(indent=' '*4*level, value=self._repr)
 
         for child in self.children:
             ret += child.__str__(level+1)

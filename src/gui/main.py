@@ -38,7 +38,7 @@ class TkVisualiser(tk.Toplevel):
         frmLeft.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
 
         ## Widget Listbox
-        self.lbxWidgets = tk.Listbox(frmLeft)
+        self.lbxWidgets = tk.Listbox(frmLeft, font=cfg.LISTBOX_FONT)
         self.lbxWidgets.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
         self.lbxWidgets.bind('<<ListboxSelect>>',
                 self.lbxWidgetsSelectionChanged)
