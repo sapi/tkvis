@@ -113,22 +113,22 @@ class TkVisualiser(tk.Toplevel):
 
     def _selectWidget(self, tkObj):
         # reset the old value
-        oldWidget, oldValue = self._selection
+        oldObject, oldValue = self._selection
 
-        if oldWidget is not None:
-            clear_highlight(oldWidget, oldValue)
+        if oldObject is not None:
+            clear_highlight(oldObject.obj, oldValue)
 
         oldParent, oldParentValue = self._selectionParent
 
         if oldParent is not None:
-            clear_highlight(oldParent, oldParentValue)
+            clear_highlight(oldParent.obj, oldParentValue)
 
         # apply the highlight and save the old value
-        self._selection = tkObj.obj, highlight(tkObj.obj)
+        self._selection = tkObj, highlight(tkObj.obj)
 
         if tkObj.parent is not None:
             self._selectionParent = (
-                    tkObj.parent.obj,
+                    tkObj.parent,
                     highlight(tkObj.parent.obj, asParent=True)
                 )
         else:
@@ -153,8 +153,9 @@ class TkVisualiser(tk.Toplevel):
         self._selectWidget(self._objsRoot)
 
         # Bind to the root window's configuration method
-        fSelectRoot = lambda evt: self._selectWidget(self._objsRoot)
-        self._objsRoot.obj.bind('<Configure>', fSelectRoot)
+        fRedraw = lambda evt: self._selectWidget(
+                self._selection[0] or self._objsRoot)
+        self._objsRoot.obj.bind('<Configure>', fRedraw)
 
     def _updateLbxWidgets(self):
         self.lbxWidgets.delete(0, tk.END)
