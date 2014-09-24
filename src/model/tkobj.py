@@ -44,9 +44,29 @@ class TkObject(object):
             for elem in child:
                 yield elem
 
+    def rearrangeChildren(self):
+        # We want to order all packed children before all unpacked children
+        # This is to account for people creating widgets in a different order
+        # than they are packed
+        # Our end result should have all unpacked widgets at the bottom
+        packed = []
+        unpacked = []
+
+        for child in self.children:
+            if child.isPacked:
+                packed.append(child)
+            else:
+                unpacked.append(child)
+
+        self.children = packed + unpacked
+
     @property
     def children(self):
         return self._children
+
+    @children.setter
+    def children(self, val):
+        self._children = val
 
     def addChild(self, child):
         self._children.append(child)
@@ -68,6 +88,10 @@ class TkObject(object):
 
         self._packArgs = Namespace(**d)
         self._isPacked = True
+
+        # layout our parent
+        if self.parent is not None:
+            self.parent.rearrangeChildren()
 
     @property
     def isPacked(self):
