@@ -21,7 +21,7 @@ class TkVisualiser(tk.Toplevel):
         '''
         tk.Toplevel.__init__(self, master, *args, **kwargs)
 
-        # change window settings
+        #### Change window settings
         self.title('TK Visualiser')
 
         #### Set up the window
@@ -146,6 +146,10 @@ class TkVisualiser(tk.Toplevel):
         self.lbxWidgets.selection_set(0)
 
         self._selectWidget(self._objsRoot)
+
+        # Bind to the root window's configuration method
+        fSelectRoot = lambda evt: self._selectWidget(self._objsRoot)
+        self._objsRoot.obj.bind('<Configure>', fSelectRoot)
 
     def _updateLbxWidgets(self):
         self.lbxWidgets.delete(0, tk.END)
