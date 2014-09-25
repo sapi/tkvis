@@ -4,9 +4,9 @@ import sys
 
 class EventManager(object):
     def __init__(self):
-        self._events = []
-
         self._topLevelEvents = []  # at top of call stack; child of nothing
+
+        self._enabled = True
 
     def _findParent(self, frames, obj=None):
         events = obj.children if obj is not None else self._topLevelEvents
@@ -17,9 +17,16 @@ class EventManager(object):
 
                 return parent if parent is not None else evt
 
+    def disable(self):
+        self._enabled = False
+
+    def enable(self):
+        self._enabled = True
+
     def addEvent(self, event):
-        # try to find a parent
-        # this will be the LOWEST (ie, earliest) item on the stack
+        if not self._enabled:
+            return
+
         frames = [frame for frame,_,_,_,_,_ in inspect.stack()]
         parent = self._findParent(frames)
 
@@ -27,9 +34,6 @@ class EventManager(object):
             parent.addChild(event)
         else:
             self._topLevelEvents.append(event)
-
-        # add it to the list of events
-        self._events.append(event)
 
 
 # Mimic a singleton with a module var
@@ -79,6 +83,7 @@ def log(fn, isMethod=True):
         # set the current frame as the event's frame
         # this isn't entirely accurate (as the event represents the function
         # we're about to call), but will work for our purposes
+        # TODO this WILL cause a memory leak: need to delete frame later
         evt.frame = inspect.currentframe()
 
         EVENT_MANAGER.addEvent(evt)
@@ -88,6 +93,7 @@ def log(fn, isMethod=True):
         evt.result = result
 
         return result
+
     return f
 
 

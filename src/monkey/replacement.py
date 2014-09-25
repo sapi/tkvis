@@ -103,11 +103,18 @@ def run(root):
 
     def f():
         from src.gui.main import create_gui
+        from callbacks import EVENT_MANAGER
+
+        EVENT_MANAGER.disable()
 
         window = create_gui(root)
-        OBJS_ROOT.removeChild(OBJS[id(window)])
 
+        window.setEventManager(EVENT_MANAGER)
+
+        OBJS_ROOT.removeChild(OBJS[id(window)])
         window.setObjectTree(OBJS_ROOT, OBJS)
+
+        EVENT_MANAGER.enable()
 
         mainloop()
     return f

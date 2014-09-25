@@ -1,4 +1,5 @@
 import tkvis as tk
+import ttk
 
 from src.config import cfg
 from src.model.widgets import clear_highlight, highlight
@@ -92,6 +93,14 @@ class TkVisualiser(tk.Toplevel):
                 text='Reserved Space: {}'.format(cfg.COLORS.RESERVED_SPACE)
             ).pack(side=tk.TOP)
 
+        #### TODO this doesn't belong here
+        self.treeView = ttk.Treeview(self)
+        self.treeView.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
+
+        ysb = ttk.Scrollbar(self, orient='vertical', command=self.treeView.yview)
+        xsb = ttk.Scrollbar(self, orient='horizontal', command=self.treeView.xview)
+        self.treeView.configure(yscroll=ysb.set, xscroll=xsb.set)
+
         ## Canvas
         self.cvsPackLayout = PackLayoutCanvas(frmRight)
         self.cvsPackLayout.pack(side=tk.TOP)
@@ -142,6 +151,30 @@ class TkVisualiser(tk.Toplevel):
 
         # update the pack args
         self.setPackArgs(tkObj)
+
+        # update the tree view TODO not here
+        self._updateTreeview()
+
+    def setEventManager(self, manager):
+        self._eventManager = manager
+
+    def _updateTreeview(self):
+        for item in self.treeView.get_children():
+            self.treeView.delete(item)
+
+        self._eventManager.disable()
+
+        for obj in self._eventManager._topLevelEvents:
+            self._addToTreeview(obj, '')
+
+        self._eventManager.enable()
+
+    def _addToTreeview(self, obj, parent):
+        print 'Going to add: %s: %s'%(id(obj), obj)
+        objID = self.treeView.insert(parent, tk.END, text=str(obj))
+
+        for child in obj.children:
+            self._addToTreeview(child, objID)
 
     def setObjectTree(self, root, objs):
         self._objsRoot = root
@@ -213,7 +246,9 @@ class TkVisualiser(tk.Toplevel):
         sw = window.winfo_width()
         sh = window.winfo_height()
 
-        self.cvsPackLayout.config(width=sw, height=sh)
+        #self.cvsPackLayout.config(width=sw, height=sh)
+        # TODO TODO 
+        self.cvsPackLayout.config(width=0, height=0)
         self.cvsPackLayout.redraw(tkObj, self._objsRoot)
 
 
