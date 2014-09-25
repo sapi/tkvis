@@ -31,3 +31,8 @@ setattr(Tkinter, 'Toplevel', _Toplevel)
 for name in dir(Tkinter):
     obj = getattr(Tkinter, name)
     globals()[name] = obj
+
+
+# import monitor into global scope so this can be called after importing tkvis
+# hopefully this never conflicts with anything in Tk...
+from src.monkey.callbacks import monitor
